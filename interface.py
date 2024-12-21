@@ -26,7 +26,10 @@ def transcrever_arquivo(arquivo_audio):
         resposta = modelo.transcribe(arquivo_convertido)
 
         # Exibir a transcrição na interface
-        transcricao_texto.set(resposta['text'])
+        transcricao_texto.config(state="normal")  # Permitir edição temporária
+        transcricao_texto.delete("1.0", tk.END)   # Limpar texto anterior
+        transcricao_texto.insert(tk.END, resposta['text'])  # Inserir o texto transcrito
+        transcricao_texto.config(state="disabled")  # Bloquear edição novamente
 
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao processar o arquivo: {e}")
@@ -49,10 +52,10 @@ root.geometry("600x400")
 titulo = tk.Label(root, text="Transcrição de Áudio", font=("Arial", 16))
 titulo.pack(pady=20)
 
-# Área de texto para exibir a transcrição
-transcricao_texto = tk.StringVar()
-transcricao_label = tk.Label(root, textvariable=transcricao_texto, wraplength=550, justify="left", font=("Arial", 12))
-transcricao_label.pack(pady=20)
+# Área de texto para exibir a transcrição (Text Widget)
+transcricao_texto = tk.Text(root, wrap="word", font=("Arial", 12), height=15, width=70)
+transcricao_texto.pack(pady=20)
+transcricao_texto.config(state="disabled")  # Configurar como read-only inicialmente
 
 # Botão para selecionar o arquivo de áudio
 botao_selecionar = tk.Button(root, text="Selecionar Áudio", command=selecionar_audio, font=("Arial", 12))
